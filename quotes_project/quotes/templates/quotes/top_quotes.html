@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Топ-10 цитат по лайкам</h2>
+<div class="list-group">
+    {% for quote in quotes %}
+    <div class="list-group-item">
+        <blockquote class="blockquote mb-2">
+            <p>{{ quote.text }}</p>
+            <footer class="blockquote-footer">{{ quote.source }}</footer>
+        </blockquote>
+        <div class="d-flex justify-content-between">
+            <span>👍 {{ quote.likes }}</span>
+            <span>👎 {{ quote.dislikes }}</span>
+            <span>👀 {{ quote.views }}</span>
+            <span>Вес: {{ quote.weight }}</span>
+        </div>
+    </div>
+    {% empty %}
+    <p>Цитаты пока не добавлены.</p>
+    {% endfor %}
+</div>
+{% endblock %}

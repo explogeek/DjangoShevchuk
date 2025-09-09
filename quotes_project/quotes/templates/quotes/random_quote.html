@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card text-center">
+    <div class="card-header">
+        Случайная цитата
+    </div>
+    <div class="card-body">
+        {% if quote %}
+            <blockquote class="blockquote mb-4">
+                <p>{{ quote.text }}</p>
+                <footer class="blockquote-footer">{{ quote.source }}</footer>
+            </blockquote>
+            
+            <div class="d-flex justify-content-center mb-3">
+                <button class="btn btn-outline-primary me-2" onclick="likeQuote({{ quote.id }})">
+                    👍 <span id="likes-count">{{ quote.likes }}</span>
+                </button>
+                <button class="btn btn-outline-secondary" onclick="dislikeQuote({{ quote.id }})">
+                    👎 <span id="dislikes-count">{{ quote.dislikes }}</span>
+                </button>
+            </div>
+            
+            <div class="text-muted">
+                Просмотров: {{ quote.views }} | Вес: {{ quote.weight }}
+            </div>
+        {% else %}
+            <p>Цитаты пока не добавлены.</p>
+            <a href="{% url 'add_quote' %}" class="btn btn-primary">Добавить первую цитату</a>
+        {% endif %}
+    </div>
+    <div class="card-footer text-muted">
+        <a href="{% url 'random_quote' %}" class="btn btn-primary">Следующая цитата</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function likeQuote(quoteId) {
+    fetch(`/like/${quoteId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('likes-count').textContent = data.likes;
+        document.getElementById('dislikes-count').textContent = data.dislikes;
+    });
+}
+
+function dislikeQuote(quoteId) {
+    fetch(`/dislike/${quoteId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('likes-count').textContent = data.likes;
+        document.getElementById('dislikes-count').textContent = data.dislikes;
+    });
+}
+</script>
+{% endblock %}
